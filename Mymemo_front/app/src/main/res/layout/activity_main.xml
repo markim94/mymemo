@@ -41,20 +41,19 @@
         android:gravity="center">
 
         <Button
+            android:id="@+id/newMemoBtn"
             android:layout_width="150dp"
             android:layout_height="48dp"
             android:layout_marginRight="20dp"
             android:text="새 메모"/>
 
         <Button
+            android:id="@+id/closeBtn"
             android:layout_width="150dp"
             android:layout_height="48dp"
             android:text="닫기"/>
 
 
     </LinearLayout>
-
-
-
 
 </RelativeLayout>

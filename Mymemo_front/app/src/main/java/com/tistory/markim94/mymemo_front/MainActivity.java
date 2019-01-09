@@ -6,16 +6,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    // 메모 리스트뷰
     ListView memoListView;
+
+    // 메모 추가, 닫기 버튼
     Button newMemoBtn;
     Button closeBtn;
+
     // 리스트 어댑터
     MemoListAdapter memoListAdapter;
+
+    // 메모 개수
+    int mMemoCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         // 메모 리스트에 대한 객체 참조
         memoListView = (ListView) findViewById(R.id.memoList);
-
         memoListAdapter = new MemoListAdapter(this);
         memoListView.setAdapter(memoListAdapter);
 
@@ -40,19 +47,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        newMemoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(this, "새 메모추가 버튼 클릭", Toast.LENGTH_SHORT);
+            }
+        });
 
-//        // 테스트 데이터 로딩
-//        loadMemoListData();
+
+        // 테스트 데이터 로딩
+        loadMemoListData();
     }
 
-//    private void loadMemoListData(){
-//        // mItem 객체 생성
-//        MemoListItem mItem = new MemoListItem("1", "2011-06-10 10:20", "오늘은 좋은 날!", null, null, null, null, null, null, null, null);
-//        // 어댑터 아이템 추가
-//        memoListAdapter.addItem(mItem);
-//        // 리스트뷰 갱신
-//        memoListAdapter.notifyDataSetChanged();
-//    }
+    private void loadMemoListData(){
+        // mItem 객체 생성
+        MemoListItem mItem = new MemoListItem("1", "2011-06-10 10:20", "오늘은 좋은 날!", null, null, null, null, null, null, null, null);
+        // 어댑터 아이템 추가
+        memoListAdapter.addItem(mItem);
+        // 리스트뷰 갱신
+        memoListAdapter.notifyDataSetChanged();
+    }
 
 
     // 각 포지션에 따른 메모 데이터 불러오기.

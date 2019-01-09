@@ -37,8 +37,51 @@ public class MemoListItem {
         mData[9] = uri_voice;
     }
 
-    // item 선택여부 반환
+    // item 선택여부 반환(getter)
     public boolean isSelectable() { return mSelectable; }
 
+    // selectable setter
+    public void setSelectable(boolean selectable) { mSelectable = selectable; }
+
+    // Id getter
+    public String getId() { return mId; }
+
+    // Id setter
+    public void setId(String itemId) { mId = itemId; }
+
+    // Data getter (array 통째로)
+    public Object[] getData() { return mData; }
+
+    // Data index getter
+    public Object getData(int index){
+        if (mData == null || index >= mData.length){
+            return null;
+        }
+        return mData[index];
+    }
+
+    // Data setter (array)
+    public void setData(String[] obj) { mData = obj; }
+
+
+    // memoListItem 비교
+    public int compareTo(MemoListItem other) {
+        if (mData != null) {
+            Object[] otherData = other.getData();
+            if (mData.length == otherData.length) {
+                for (int i = 0; i < mData.length; i++) {
+                    if (!mData[i].equals(otherData[i])) {
+                        return -1;
+                    }
+                }
+            } else {
+                return -1;
+            }
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        return 0;
+    }
 
 }

@@ -3,7 +3,7 @@ package com.tistory.markim94.mymemo_front;
 public class MemoListItem {
 
     // 각 리스트 아이템의 데이터를 담을 Object array
-    private Object[] mData;
+    private String[] mData;
 
     // 각 메모의 고유 Id
     private String mId;
@@ -12,11 +12,27 @@ public class MemoListItem {
     private boolean mSelectable = true;
 
     // 생성자
-    public MemoListItem(String itemId, Object[] obj){
+
+    /**
+     * Initialize with icon and data array
+     *
+     * @param obj
+     *
+     */
+    public MemoListItem(String itemId, String[] obj){
         mId = itemId;
         mData = obj;
     }
 
+    /**
+     * Initialize with strings
+     *
+     *
+     * @param obj01 - memo input_date
+     * @param obj02 - memo memoStr
+     * @param obj03 - memo picture_id
+     *
+     */
     public MemoListItem(String memoId, String memoDate, String memoText,
                         String id_handwriting, String uri_handwriting,
                         String id_photo, String uri_photo,
@@ -24,7 +40,7 @@ public class MemoListItem {
                         String id_voice, String uri_voice){
 
         mId = memoId;
-        mData = new Object[10];
+        mData = new String[10];
         mData[0] = memoDate;
         mData[1] = memoText;
         mData[2] = id_handwriting;
@@ -53,10 +69,11 @@ public class MemoListItem {
     public Object[] getData() { return mData; }
 
     // Data index getter
-    public Object getData(int index){
+    public String getData(int index){
         if (mData == null || index >= mData.length){
             return null;
         }
+
         return mData[index];
     }
 

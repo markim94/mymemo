@@ -47,10 +47,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 새 메모 추가 버튼 클릭 리스너
         newMemoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(this, "새 메모추가 버튼 클릭", Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(), "새 메모추가 버튼 클릭", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // 닫기 버튼 클릭 리스너
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "닫기 버튼 클릭", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -61,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadMemoListData(){
         // mItem 객체 생성
-        MemoListItem mItem = new MemoListItem("1", "2011-06-10 10:20", "오늘은 좋은 날!", null, null, null, null, null, null, null, null);
+        MemoListItem mItem = new MemoListItem("1", "2011-06-10 10:20", "오늘은 좋은 날!",
+                null, null, null, null, null,
+                null, null, null);
         // 어댑터 아이템 추가
         memoListAdapter.addItem(mItem);
         // 리스트뷰 갱신

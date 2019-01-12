@@ -4,10 +4,13 @@ import java.text.SimpleDateFormat;
 
 public class BasicInfo {
 
+    public static String language = "";
+
+
     /**
      * 외장 메모리 패스
      */
-    public static String ExternalPath = "/sdcard/";
+    public static String ExternalPath = "/mnt/sdcard/";
 
     /**
      * 외장 메모리 패스 체크 여부
@@ -17,22 +20,22 @@ public class BasicInfo {
     /**
      * 사진 저장 위치
      */
-    public static String FOLDER_PHOTO 		= "MultimediaMemo/photo/";
+    public static String FOLDER_PHOTO 		= "memo/photo/";
 
     /**
      * 동영상 저장 위치
      */
-    public static String FOLDER_VIDEO 		= "MultimediaMemo/video/";
+    public static String FOLDER_VIDEO 		= "memo/video/";
 
     /**
      * 녹음 저장 위치
      */
-    public static String FOLDER_VOICE 		= "MultimediaMemo/voice/";
+    public static String FOLDER_VOICE 		= "memo/voice/";
 
     /**
      * 손글씨 저장 위치
      */
-    public static String FOLDER_HANDWRITING 	= "MultimediaMemo/handwriting/";
+    public static String FOLDER_HANDWRITING 	= "memo/handwriting/";
 
     /**
      * 미디어 포맷
@@ -42,7 +45,7 @@ public class BasicInfo {
     /**
      * 데이터베이스 이름
      */
-    public static String DATABASE_NAME = "MultimediaMemo/memo.db";
+    public static String DATABASE_NAME = "memo/memo.db";
 
 
     //========== 인텐트 부가정보 전달을 위한 키값 ==========//
@@ -81,7 +84,12 @@ public class BasicInfo {
     //========== 날짜 포맷  ==========//
     public static SimpleDateFormat dateDayNameFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
     public static SimpleDateFormat dateDayFormat = new SimpleDateFormat("yyyy-MM-dd");
-
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static SimpleDateFormat dateNameFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분");
+    public static SimpleDateFormat dateNameFormat2 = new SimpleDateFormat("yyyy-MM-dd HH시 mm분");
+    public static SimpleDateFormat dateNameFormat3 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    public static SimpleDateFormat dateTimeNameFormat = new SimpleDateFormat("HH시 mm분");
+    public static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("HH:mm");
 
     //========== 대화상자 키값  ==========//
     public static final int WARNING_INSERT_SDCARD = 1001;
@@ -99,6 +107,8 @@ public class BasicInfo {
     public static final int CONFIRM_DELETE = 3001;
 
     public static final int CONFIRM_TEXT_INPUT = 3002;
+
+
 
     public static boolean isAbsoluteVideoPath(String videoUri) {
         if(videoUri.startsWith(URI_MEDIA_FORMAT)) {

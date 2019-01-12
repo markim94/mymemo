@@ -3,6 +3,7 @@ package com.tistory.markim94.mymemo_front;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TimePicker;
 
 import com.tistory.markim94.mymemo_front.db.MemoDatabase;
 
@@ -34,10 +36,8 @@ public class MemoInsertActivity extends AppCompatActivity {
 
     public static final String TAG = "MemoInsertActivity";
 
-    Button mPhotoBtn;
     Button mVideoBtn;
     Button mVoiceBtn;
-    Button mHandwritingBtn;
 
     EditText mMemoEdit;
     ImageView mPhoto;
@@ -85,6 +85,7 @@ public class MemoInsertActivity extends AppCompatActivity {
 
     Calendar mCalendar = Calendar.getInstance();
     Button insertDateButton;
+    Button insertTimeButton;
 
     int mSelectdContentArray;
     int mChoicedArrayItem;
@@ -116,6 +117,15 @@ public class MemoInsertActivity extends AppCompatActivity {
         insert_memoEdit = (EditText)findViewById(R.id.insert_memoEdit);
         insert_handwriting = (ImageView)findViewById(R.id.insert_handwriting);
         deleteBtn = (Button)findViewById(R.id.deleteBtn);
+        mVideoBtn = (Button)findViewById(R.id.insert_videoBtn);
+        mVoiceBtn = (Button)findViewById(R.id.insert_voiceBtn);
+
+        mVideoBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                (R.drawable.icon_video), null, null);
+
+        mVoiceBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                (R.drawable.icon_voice), null, null);
+
 
         translateLeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left);
         translateRightAnim = AnimationUtils.loadAnimation(this, R.anim.translate_right);
@@ -178,6 +188,35 @@ public class MemoInsertActivity extends AppCompatActivity {
             }
         });
 
+        mVideoBtn.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                if(isVideoRecorded || isVideoFileSaved)
+                {
+                    showDialog(BasicInfo.CONTENT_VIDEO_EX);
+                }
+                else
+                {
+                    showDialog(BasicInfo.CONTENT_VIDEO);
+                }
+            }
+        });
+
+        mVoiceBtn.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                if(isVoiceRecorded || isVoiceFileSaved)
+                {
+                    showDialog(BasicInfo.CONTENT_VOICE_EX);
+                }
+                else
+                {
+                    showDialog(BasicInfo.CONTENT_VOICE);
+                }
+            }
+        });
+
+
 
         setBottomButtons();
 
@@ -223,6 +262,7 @@ public class MemoInsertActivity extends AppCompatActivity {
     public void processIntent(Intent intent) {
         mMemoId = intent.getStringExtra(BasicInfo.KEY_MEMO_ID);
         mMemoEdit.setText(intent.getStringExtra(BasicInfo.KEY_MEMO_TEXT));
+        String curMemoText = intent.getStringExtra(BasicInfo.KEY_MEMO_TEXT);
         mMediaPhotoId = intent.getStringExtra(BasicInfo.KEY_ID_PHOTO);
         mMediaPhotoUri = intent.getStringExtra(BasicInfo.KEY_URI_PHOTO);
         mMediaVideoId = intent.getStringExtra(BasicInfo.KEY_ID_VIDEO);
@@ -233,7 +273,60 @@ public class MemoInsertActivity extends AppCompatActivity {
         mMediaHandwritingUri = intent.getStringExtra(BasicInfo.KEY_URI_HANDWRITING);
 
         setMediaImage(mMediaPhotoId, mMediaPhotoUri, mMediaVideoId, mMediaVoiceId, mMediaHandwritingId);
+
+        setMemoDate(mMemoDate);
+
+        if (curMemoText != null && !curMemoText.equals("")) {
+            textViewMode  = 0;
+            insert_handwriting.setVisibility(View.GONE);
+            insert_memoEdit.setVisibility(View.VISIBLE);
+
+            insert_textBtn.setSelected(true);
+            insert_handwritingBtn.setSelected(false);
+        } else {
+            textViewMode  = 1;
+            insert_handwriting.setVisibility(View.VISIBLE);
+            insert_memoEdit.setVisibility(View.GONE);
+
+            insert_textBtn.setSelected(false);
+            insert_handwritingBtn.setSelected(true);
+        }
     }
+
+    public void showVideoRecordingActivity() {
+        Intent intent = new Intent(getApplicationContext(), VideoRecordingActivity.class);
+        startActivityForResult(intent, BasicInfo.REQ_VIDEO_RECORDING_ACTIVITY);
+    }
+
+    public void showVideoLoadingActivity() {
+        Intent intent = new Intent(getApplicationContext(), VideoSelectionActivity.class);
+        startActivityForResult(intent, BasicInfo.REQ_VIDEO_LOADING_ACTIVITY);
+    }
+
+    public void showVideoPlayingActivity() {
+        Intent intent = new Intent(getApplicationContext(), VideoPlayActivity.class);
+        if(BasicInfo.isAbsoluteVideoPath(tempVideoUri)) {
+            intent.putExtra(BasicInfo.KEY_URI_VIDEO, BasicInfo.FOLDER_VIDEO + tempVideoUri);
+        } else {
+            intent.putExtra(BasicInfo.KEY_URI_VIDEO, tempVideoUri);
+        }
+
+        startActivity(intent);
+    }
+
+    public void showVoiceRecordingActivity() {
+        Intent intent = new Intent(getApplicationContext(), VoiceRecordingActivity.class);
+        startActivityForResult(intent, BasicInfo.REQ_VOICE_RECORDING_ACTIVITY);
+    }
+
+    public void showVoicePlayingActivity() {
+        Intent intent = new Intent(getApplicationContext(), VoicePlayActivity.class);
+        intent.putExtra(BasicInfo.KEY_URI_VOICE, BasicInfo.FOLDER_VOICE + tempVoiceUri);
+        startActivity(intent);
+    }
+
+
+
 
 
     public void setMediaImage(String photoId, String photoUri, String videoId, String voiceId, String handwritingId) {
@@ -255,6 +348,29 @@ public class MemoInsertActivity extends AppCompatActivity {
             Bitmap resultBitmap = BitmapFactory.decodeFile(BasicInfo.FOLDER_HANDWRITING + tempHandwritingUri);
             insert_handwriting.setImageBitmap(resultBitmap);
         }
+
+        if(videoId.equals("") || videoId.equals("-1")) {
+            mVideoBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                    (R.drawable.icon_video_empty), null, null);
+        } else {
+            isVideoFileSaved = true;
+            tempVideoUri = mMediaVideoUri;
+
+            mVideoBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                    (R.drawable.icon_video), null, null);
+        }
+
+        if(voiceId.equals("") || voiceId.equals("-1")) {
+            mVoiceBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                    (R.drawable.icon_voice_empty), null, null);
+        } else {
+            isVoiceFileSaved = true;
+            tempVoiceUri = mMediaVoiceUri;
+
+            mVoiceBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                    (R.drawable.icon_voice), null, null);
+        }
+
     }
 
 
@@ -329,13 +445,46 @@ public class MemoInsertActivity extends AppCompatActivity {
         }
 
 
+        String videoFileName = insertVideo();
+        int videoId = -1;
+
+        if (videoFileName != null) {
+            // query picture id
+            SQL = "select _ID from " + MemoDatabase.TABLE_VIDEO + " where URI = '" + videoFileName + "'";
+            Log.d(TAG, "SQL : " + SQL);
+            if (MultiMemoActivity.mDatabase != null) {
+                Cursor cursor = MultiMemoActivity.mDatabase.rawQuery(SQL);
+                if (cursor.moveToNext()) {
+                    videoId = cursor.getInt(0);
+                }
+                cursor.close();
+            }
+        }
+
+        String voiceFileName = insertVoice();
+        int voiceId = -1;
+
+        if (isVoiceRecorded && voiceFileName != null) {
+            // query picture id
+            SQL = "select _ID from " + MemoDatabase.TABLE_VOICE + " where URI = '" + voiceFileName + "'";
+            Log.d(TAG, "SQL : " + SQL);
+            if (MultiMemoActivity.mDatabase != null) {
+                Cursor cursor = MultiMemoActivity.mDatabase.rawQuery(SQL);
+                if (cursor.moveToNext()) {
+                    voiceId = cursor.getInt(0);
+                }
+                cursor.close();
+            }
+        }
+
+
         SQL = "insert into " + MemoDatabase.TABLE_MEMO +
                 "(INPUT_DATE, CONTENT_TEXT, ID_PHOTO, ID_VIDEO, ID_VOICE, ID_HANDWRITING) values(" +
                 "DATETIME('" + mDateStr + "'), " +
                 "'"+ mMemoStr + "', " +
                 "'"+ photoId + "', " +
-                "'"+ "" + "', " +
-                "'"+ "" + "', " +
+                "'"+ videoId + "', " +
+                "'"+ voiceId + "', " +
                 "'"+ handwritingId + "')";  		// Stage3 added
 
         Log.d(TAG, "SQL : " + SQL);
@@ -461,6 +610,114 @@ public class MemoInsertActivity extends AppCompatActivity {
             }
 
             mMediaHandwritingId = String.valueOf(handwritingId);
+        }
+
+        String videoFileName = insertVideo();
+        int videoId = -1;
+
+        if (videoFileName != null) {
+            // query picture id
+            SQL = "select _ID from " + MemoDatabase.TABLE_VIDEO + " where URI = '" + videoFileName + "'";
+            Log.d(TAG, "SQL : " + SQL);
+            if (MultiMemoActivity.mDatabase != null) {
+                Cursor cursor = MultiMemoActivity.mDatabase.rawQuery(SQL);
+                if (cursor.moveToNext()) {
+                    videoId = cursor.getInt(0);
+                }
+                cursor.close();
+
+                mMediaVideoUri = videoFileName;
+
+                SQL = "update " + MemoDatabase.TABLE_MEMO +
+                        " set " +
+                        " ID_VIDEO = '" + videoId + "'" +
+                        " where _id = '" + mMemoId + "'";
+
+                if (MultiMemoActivity.mDatabase != null) {
+                    MultiMemoActivity.mDatabase.rawQuery(SQL);
+                }
+
+                mMediaVideoId = String.valueOf(videoId);
+            }
+        }
+        else if(isVideoCanceled && isVideoFileSaved)
+        {
+            SQL = "delete from " + MemoDatabase.TABLE_VIDEO +
+                    " where _ID = '" + mMediaVideoId + "'";
+            Log.d(TAG, "SQL : " + SQL);
+            if (MultiMemoActivity.mDatabase != null) {
+                MultiMemoActivity.mDatabase.execSQL(SQL);
+            }
+
+            File videoFile = new File(BasicInfo.FOLDER_VIDEO + mMediaVideoUri);
+            if (videoFile.exists()) {
+                videoFile.delete();
+            }
+
+            SQL = "update " + MemoDatabase.TABLE_MEMO +
+                    " set " +
+                    " ID_VIDEO = '" + videoId + "'" +
+                    " where _id = '" + mMemoId + "'";
+
+            if (MultiMemoActivity.mDatabase != null) {
+                MultiMemoActivity.mDatabase.rawQuery(SQL);
+            }
+
+            mMediaVideoId = String.valueOf(videoId);
+        }
+
+        String voiceFileName = insertVoice();
+        int voiceId = -1;
+
+        if (voiceFileName != null) {
+            // query picture id
+            SQL = "select _ID from " + MemoDatabase.TABLE_VOICE + " where URI = '" + voiceFileName + "'";
+            Log.d(TAG, "SQL : " + SQL);
+            if (MultiMemoActivity.mDatabase != null) {
+                Cursor cursor = MultiMemoActivity.mDatabase.rawQuery(SQL);
+                if (cursor.moveToNext()) {
+                    voiceId = cursor.getInt(0);
+                }
+                cursor.close();
+
+                mMediaVoiceUri = voiceFileName;
+
+                SQL = "update " + MemoDatabase.TABLE_MEMO +
+                        " set " +
+                        " ID_VOICE = '" + voiceId + "'" +
+                        " where _id = '" + mMemoId + "'";
+
+                if (MultiMemoActivity.mDatabase != null) {
+                    MultiMemoActivity.mDatabase.rawQuery(SQL);
+                }
+
+                mMediaVoiceId = String.valueOf(voiceId);
+            }
+        }
+        else if(isVoiceCanceled && isVoiceFileSaved)
+        {
+            SQL = "delete from " + MemoDatabase.TABLE_VOICE +
+                    " where _ID = '" + mMediaVoiceId + "'";
+            Log.d(TAG, "SQL : " + SQL);
+            if (MultiMemoActivity.mDatabase != null) {
+                MultiMemoActivity.mDatabase.execSQL(SQL);
+            }
+
+            File voiceFile = new File(BasicInfo.FOLDER_VOICE + mMediaVoiceUri);
+            if (voiceFile.exists()) {
+                voiceFile.delete();
+            }
+
+            SQL = "update " + MemoDatabase.TABLE_MEMO +
+                    " set " +
+                    " ID_VOICE = '" + voiceId + "'" +
+                    " where _id = '" + mMemoId + "'";
+
+            if (MultiMemoActivity.mDatabase != null) {
+                MultiMemoActivity.mDatabase.rawQuery(SQL);
+            }
+
+            mMediaVoiceId = String.valueOf(voiceId);
         }
 
 
@@ -619,6 +876,118 @@ public class MemoInsertActivity extends AppCompatActivity {
     }
 
 
+    private String insertVideo() {
+        String videoName = null;
+        Log.d(TAG, "isVideoRecorded            : " +isVideoRecorded);
+
+        if (isVideoRecorded) { // captured Bitmap
+            if (mMemoMode != null && (mMemoMode.equals(BasicInfo.MODE_MODIFY)  || mMemoMode.equals(BasicInfo.MODE_VIEW))) {
+                Log.d(TAG, "previous video is newly created for modify mode.");
+
+                String SQL = "delete from " + MemoDatabase.TABLE_VIDEO +
+                        " where _ID = '" + mMediaVideoId + "'";
+                Log.d(TAG, "SQL : " + SQL);
+                if (MultiMemoActivity.mDatabase != null) {
+                    MultiMemoActivity.mDatabase.execSQL(SQL);
+                }
+
+                if(BasicInfo.isAbsoluteVideoPath(mMediaVideoUri))
+                {
+                    File previousFile = new File(BasicInfo.FOLDER_VIDEO + mMediaVideoUri);
+                    if (previousFile.exists()) {
+                        previousFile.delete();
+                    }
+                }
+            }
+
+            if(BasicInfo.isAbsoluteVideoPath(tempVideoUri))
+            {
+                File videoFolder = new File(BasicInfo.FOLDER_VIDEO);
+
+                //폴더가 없다면 폴더를 생성한다.
+                if(!videoFolder.isDirectory()){
+                    Log.d(TAG, "creating video folder : " + videoFolder);
+                    videoFolder.mkdirs();
+                }
+
+                // Temporal Hash for video file name
+                videoName = createFilename();
+
+                File tempFile = new File(BasicInfo.FOLDER_VIDEO + "recorded");
+                tempFile.renameTo(new File(BasicInfo.FOLDER_VIDEO + videoName));
+            }
+            else
+            {
+                videoName = tempVideoUri;
+            }
+
+            if (videoName != null) {
+                Log.d(TAG, "isVideoRecorded            : " +isVideoRecorded);
+
+                // INSERT PICTURE INFO
+                String SQL = "insert into " + MemoDatabase.TABLE_VIDEO + "(URI) values(" + "'" + videoName + "')";
+                if (MultiMemoActivity.mDatabase != null) {
+                    MultiMemoActivity.mDatabase.execSQL(SQL);
+                }
+            }
+
+        }
+
+        return videoName;
+    }
+
+    private String insertVoice() {
+        String voiceName = null;
+        Log.d(TAG, "isVoiceRecorded            : " +isVoiceRecorded);
+        if (isVoiceRecorded) { // captured Bitmap
+            if (mMemoMode != null && (mMemoMode.equals(BasicInfo.MODE_MODIFY)  || mMemoMode.equals(BasicInfo.MODE_VIEW))) {
+                Log.d(TAG, "previous voice is newly created for modify mode.");
+
+                String SQL = "delete from " + MemoDatabase.TABLE_VOICE +
+                        " where _ID = '" + mMediaVoiceId + "'";
+                Log.d(TAG, "SQL : " + SQL);
+                if (MultiMemoActivity.mDatabase != null) {
+                    MultiMemoActivity.mDatabase.execSQL(SQL);
+                }
+
+                File previousFile = new File(BasicInfo.FOLDER_VOICE + mMediaVoiceUri);
+                if (previousFile.exists()) {
+                    previousFile.delete();
+                }
+            }
+
+
+            File voiceFolder = new File(BasicInfo.FOLDER_VOICE);
+
+            //폴더가 없다면 폴더를 생성한다.
+            if(!voiceFolder.isDirectory()){
+                Log.d(TAG, "creating voice folder : " + voiceFolder);
+                voiceFolder.mkdirs();
+            }
+
+            // Temporal Hash for voice file name
+            voiceName = createFilename();
+
+            File tempFile = new File(BasicInfo.FOLDER_VOICE + "recorded");
+            tempFile.renameTo(new File(BasicInfo.FOLDER_VOICE + voiceName));
+
+            if (voiceName != null) {
+                Log.d(TAG, "isVoiceRecorded            : " +isVoiceRecorded);
+
+                // INSERT PICTURE INFO
+                String SQL = "insert into " + MemoDatabase.TABLE_VOICE + "(URI) values(" + "'" + voiceName + "')";
+                if (MultiMemoActivity.mDatabase != null) {
+                    MultiMemoActivity.mDatabase.execSQL(SQL);
+                }
+            }
+
+        }
+
+        return voiceName;
+    }
+
+
+
 
     private String createFilename() {
         Date curDate = new Date();
@@ -665,6 +1034,29 @@ public class MemoInsertActivity extends AppCompatActivity {
             }
         });
 
+        insertTimeButton = (Button) findViewById(R.id.insert_timeBtn);
+        insertTimeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String mTimeStr = insertTimeButton.getText().toString();
+                Calendar calendar = Calendar.getInstance();
+                Date date = new Date();
+                try { date = BasicInfo.dateTimeNameFormat.parse(mTimeStr); } catch(Exception ex) {
+                    Log.d(TAG, "Exception in parsing date : " + date);
+                }
+
+                calendar.setTime(date);
+
+                new TimePickerDialog(
+                        MemoInsertActivity.this,
+                        timeSetListener,
+                        calendar.get(Calendar.HOUR_OF_DAY),
+                        calendar.get(Calendar.MINUTE),
+                        true
+                ).show();
+
+            }
+        });
+
         Date curDate = new Date();
         mCalendar.setTime(curDate);
 
@@ -672,8 +1064,82 @@ public class MemoInsertActivity extends AppCompatActivity {
         int monthOfYear = mCalendar.get(Calendar.MONTH);
         int dayOfMonth = mCalendar.get(Calendar.DAY_OF_MONTH);
 
-        insertDateButton.setText(year + "년 " + (monthOfYear+1) + "월 " + dayOfMonth + "일");
+        String monthStr = String.valueOf(monthOfYear+1);
+        if (monthOfYear < 9) {
+            monthStr = "0" + monthStr;
+        }
 
+        String dayStr = String.valueOf(dayOfMonth);
+        if (dayOfMonth < 10) {
+            dayStr = "0" + dayStr;
+        }
+
+        insertDateButton.setText(year + "년 " + monthStr + "월 " + dayStr + "일");
+
+        int hourOfDay = mCalendar.get(Calendar.HOUR_OF_DAY);
+        int minute = mCalendar.get(Calendar.MINUTE);
+
+        String hourStr = String.valueOf(hourOfDay);
+        if (hourOfDay < 10) {
+            hourStr = "0" + hourStr;
+        }
+
+        String minuteStr = String.valueOf(minute);
+        if (minute < 10) {
+            minuteStr = "0" + minuteStr;
+        }
+
+        insertTimeButton.setText(hourStr + "시 " + minuteStr + "분");
+
+
+    }
+
+    private void setMemoDate(String dateStr) {
+        Log.d(TAG, "setMemoDate() called : " + dateStr);
+
+        Date date = new Date();
+        try {
+                date = BasicInfo.dateNameFormat2.parse(dateStr);
+
+        } catch(Exception ex) {
+            Log.d(TAG, "Exception in parsing date : " + dateStr);
+        }
+
+        //Calendar calendar = Calendar.getInstance();
+        mCalendar.setTime(date);
+
+        int year = mCalendar.get(Calendar.YEAR);
+        int monthOfYear = mCalendar.get(Calendar.MONTH);
+        int dayOfMonth = mCalendar.get(Calendar.DAY_OF_MONTH);
+
+        String monthStr = String.valueOf(monthOfYear+1);
+        if (monthOfYear < 9) {
+            monthStr = "0" + monthStr;
+        }
+
+        String dayStr = String.valueOf(dayOfMonth);
+        if (dayOfMonth < 10) {
+            dayStr = "0" + dayStr;
+        }
+
+        insertDateButton.setText(year + "년 " + monthStr + "월 " + dayStr + "일");
+
+
+        int hourOfDay = mCalendar.get(Calendar.HOUR_OF_DAY);
+        int minute = mCalendar.get(Calendar.MINUTE);
+
+        String hourStr = String.valueOf(hourOfDay);
+        if (hourOfDay < 10) {
+            hourStr = "0" + hourStr;
+        }
+
+        String minuteStr = String.valueOf(minute);
+        if (minute < 10) {
+            minuteStr = "0" + minuteStr;
+        }
+
+
+        insertTimeButton.setText(hourStr + "시 " + minuteStr + "분");
     }
 
 
@@ -683,7 +1149,45 @@ public class MemoInsertActivity extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             mCalendar.set(year, monthOfYear, dayOfMonth);
-            insertDateButton.setText(year + "년 " + (monthOfYear+1) + "월 " + dayOfMonth + "일");
+
+            String monthStr = String.valueOf(monthOfYear+1);
+            if (monthOfYear < 9) {
+                monthStr = "0" + monthStr;
+            }
+
+            String dayStr = String.valueOf(dayOfMonth);
+            if (dayOfMonth < 10) {
+                dayStr = "0" + dayStr;
+            }
+
+
+
+            insertDateButton.setText(year + "년 " + monthStr + "월 " + dayStr + "일");
+
+        }
+    };
+
+    /**
+     * 시간 설정 리스너
+     */
+    TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hour_of_day, int minute) {
+            mCalendar.set(Calendar.HOUR_OF_DAY, hour_of_day);
+            mCalendar.set(Calendar.MINUTE, minute);
+
+            String hourStr = String.valueOf(hour_of_day);
+            if (hour_of_day < 10) {
+                hourStr = "0" + hourStr;
+            }
+
+            String minuteStr = String.valueOf(minute);
+            if (minute < 10) {
+                minuteStr = "0" + minuteStr;
+            }
+
+
+            insertTimeButton.setText(hourStr + "시 " + minuteStr + "분");
+
         }
     };
 
@@ -693,19 +1197,31 @@ public class MemoInsertActivity extends AppCompatActivity {
      */
     private boolean parseValues() {
         String insertDateStr = insertDateButton.getText().toString();
+        String insertTimeStr = insertTimeButton.getText().toString();
+
+        String srcDateStr = insertDateStr + " " + insertTimeStr;
+        Log.d(TAG, "source date string : " + srcDateStr);
+
         try {
-            Date insertDate = BasicInfo.dateDayNameFormat.parse(insertDateStr);
-            mDateStr = BasicInfo.dateDayFormat.format(insertDate);
+
+                Date insertDate = BasicInfo.dateNameFormat.parse(srcDateStr);
+                mDateStr = BasicInfo.dateFormat.format(insertDate);
+
         } catch(ParseException ex) {
             Log.e(TAG, "Exception in parsing date : " + insertDateStr);
         }
 
-        String memotxt = mMemoEdit.getText().toString();
-        mMemoStr = memotxt;
+        mMemoStr = mMemoEdit.getText().toString();
 
-        if (mMemoStr.trim().length() < 1) {
-            showDialog(BasicInfo.CONFIRM_TEXT_INPUT);
-            return false;
+        // if handwriting is available
+        if (isHandwritingMade || (mMemoMode != null && (mMemoMode.equals(BasicInfo.MODE_MODIFY)  || mMemoMode.equals(BasicInfo.MODE_VIEW)))) {
+
+        } else {
+            // check text memo
+            if (mMemoStr.trim().length() < 1) {
+                showDialog(BasicInfo.CONFIRM_TEXT_INPUT);
+                return false;
+            }
         }
 
         return true;
@@ -802,6 +1318,136 @@ public class MemoInsertActivity extends AppCompatActivity {
                         dismissDialog(BasicInfo.CONFIRM_DELETE);
                     }
                 });
+
+            case BasicInfo.CONTENT_VIDEO:
+                builder = new AlertDialog.Builder(this);
+
+                mSelectdContentArray = R.array.array_video;
+                builder.setTitle(R.string.selection_title);
+                builder.setSingleChoiceItems(mSelectdContentArray, 0, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Log.d(TAG, "whichButton1 : " + whichButton);
+                        mChoicedArrayItem = whichButton;
+                    }
+                });
+                builder.setPositiveButton(R.string.selection_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Log.d(TAG, "Selected Index : " + mChoicedArrayItem);
+
+                        if(mChoicedArrayItem == 0) {
+                            showVideoRecordingActivity();
+                        } else if(mChoicedArrayItem == 1) {
+                            showVideoLoadingActivity();
+                        }
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+
+                break;
+
+            case BasicInfo.CONTENT_VIDEO_EX:
+                builder = new AlertDialog.Builder(this);
+
+                mSelectdContentArray = R.array.array_video_ex;
+                builder.setTitle(R.string.selection_title);
+                builder.setSingleChoiceItems(mSelectdContentArray, 0, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Log.d(TAG, "whichButton1 : " + whichButton);
+                        mChoicedArrayItem = whichButton;
+                    }
+                });
+                builder.setPositiveButton(R.string.selection_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Log.d(TAG, "Selected Index : " + mChoicedArrayItem);
+                        if(mChoicedArrayItem == 0) {
+                            showVideoPlayingActivity();
+                        } else if(mChoicedArrayItem == 1) {
+                            showVideoRecordingActivity();
+                        } else if(mChoicedArrayItem == 2) {
+                            showVideoLoadingActivity();
+                        } else if(mChoicedArrayItem == 3) {
+                            isVideoCanceled = true;
+                            isVideoRecorded = false;
+
+                            mVideoBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                                    (R.drawable.icon_video_empty), null, null);
+                        }
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+
+                break;
+
+            case BasicInfo.CONTENT_VOICE:
+                builder = new AlertDialog.Builder(this);
+
+                mSelectdContentArray = R.array.array_voice;
+                builder.setTitle(R.string.selection_title);
+                builder.setSingleChoiceItems(mSelectdContentArray, 0, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Log.d(TAG, "whichButton1 : " + whichButton);
+                        mChoicedArrayItem = whichButton;
+                    }
+                });
+                builder.setPositiveButton(R.string.selection_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Log.d(TAG, "whichButton2        ======        " + whichButton);
+                        if(mChoicedArrayItem == 0 ){
+                            showVoiceRecordingActivity();
+                        }
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+
+                break;
+
+            case BasicInfo.CONTENT_VOICE_EX:
+                builder = new AlertDialog.Builder(this);
+
+                mSelectdContentArray = R.array.array_voice_ex;
+                builder.setTitle(R.string.selection_title);
+                builder.setSingleChoiceItems(mSelectdContentArray, 0, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Log.d(TAG, "whichButton1 : " + whichButton);
+                        mChoicedArrayItem = whichButton;
+                    }
+                });
+                builder.setPositiveButton(R.string.selection_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Log.d(TAG, "Selected Index : " + mChoicedArrayItem);
+
+                        if(mChoicedArrayItem == 0 ) {
+                            showVoicePlayingActivity();
+                        } else if(mChoicedArrayItem == 1) {
+                            showVoiceRecordingActivity();
+                        } else if(mChoicedArrayItem == 2) {
+                            isVoiceCanceled = true;
+                            isVoiceRecorded = false;
+
+                            mVoiceBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                                    (R.drawable.icon_voice_empty), null, null);
+                        }
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel_btn, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+
+
 
                 break;
             default:
@@ -949,6 +1595,55 @@ public class MemoInsertActivity extends AppCompatActivity {
 
                 break;
 
+
+            case BasicInfo.REQ_VIDEO_RECORDING_ACTIVITY:  // 동영상을 녹화하는 경우
+                Log.d(TAG, "onActivityResult() for REQ_VIDEO_RECORDING_ACTIVITY.");
+
+                if (resultCode == RESULT_OK)
+                {
+                    boolean isVideoExists = checkRecordedVideoFile();
+                    if(isVideoExists)
+                    {
+                        tempVideoUri = "recorded";
+
+                        isVideoRecorded = true;
+
+                        mVideoBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                                (R.drawable.icon_video), null, null);
+                    }
+                }
+
+                break;
+
+            case BasicInfo.REQ_VIDEO_LOADING_ACTIVITY:  // 동영상을 선택하는 경우
+                if (resultCode == RESULT_OK) {
+                    String getVideoUri = intent.getStringExtra(BasicInfo.KEY_URI_VIDEO);
+                    tempVideoUri = BasicInfo.URI_MEDIA_FORMAT + getVideoUri;
+                    isVideoRecorded = true;
+
+                    mVideoBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                            (R.drawable.icon_video), null, null);
+                }
+
+                break;
+
+            case BasicInfo.REQ_VOICE_RECORDING_ACTIVITY:  // 녹음하는 경우
+                Log.d(TAG, "onActivityResult() for REQ_VOICE_RECORDING_ACTIVITY.");
+
+                if (resultCode == RESULT_OK) {
+                    boolean isVoiceExists = checkRecordedVoiceFile();
+                    if(isVoiceExists) {
+                        tempVoiceUri = "recorded";
+
+                        isVoiceRecorded = true;
+
+                        mVoiceBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
+                                (R.drawable.icon_voice), null, null);
+                    }
+                }
+
+                break;
+
         }
     }
 
@@ -971,6 +1666,30 @@ public class MemoInsertActivity extends AppCompatActivity {
      */
     private boolean checkMadeHandwritingFile() {
         File file = new File(BasicInfo.FOLDER_HANDWRITING + "made");
+        if(file.exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 저장된 동영상 파일 확인
+     */
+    private boolean checkRecordedVideoFile() {
+        File file = new File(BasicInfo.FOLDER_VIDEO + "recorded");
+        if(file.exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 저장된 녹음 파일 확인
+     */
+    private boolean checkRecordedVoiceFile() {
+        File file = new File(BasicInfo.FOLDER_VOICE + "recorded");
         if(file.exists()) {
             return true;
         }

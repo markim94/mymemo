@@ -132,13 +132,30 @@
             </LinearLayout>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/insert_dateBtn"
-            android:layout_width="240dp"
+        <LinearLayout
+            android:id="@+id/dateLayout"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="5dp" />
+            >
+            <Button
+                android:id="@+id/insert_dateBtn"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                />
+            <Button
+                android:id="@+id/insert_timeBtn"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="center_horizontal"
+                />
+        </LinearLayout>
+
     </LinearLayout>
     <LinearLayout
         android:id="@+id/buttonLayout"

@@ -23,31 +23,26 @@ import java.io.File;
 
 public class MultiMemoActivity extends AppCompatActivity {
 
-    public static final String TAG = "MultiMemoActivity";
+    // 메모 리스트뷰
+    ListView memoListView;
 
-    /**
-     * 메모 리스트뷰
-     */
-    ListView mMemoListView;
+    // 메모 추가, 닫기 버튼
+    Button newMemoBtn;
+    Button closeBtn;
 
-    /**
-     * 메모 리스트 어댑터
-     */
-    MemoListAdapter mMemoListAdapter;
+    // 리스트 어댑터
+    MemoListAdapter memoListAdapter;
 
-    /**
-     * 메모 갯수
-     */
+    // 메모 개수
     int mMemoCount = 0;
-
 
     /**
      * 데이터베이스 인스턴스
      */
     public static MemoDatabase mDatabase = null;
 
-
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -59,7 +54,6 @@ public class MultiMemoActivity extends AppCompatActivity {
             String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
             if (!BasicInfo.ExternalChecked && externalPath != null) {
                 BasicInfo.ExternalPath = externalPath + File.separator;
-                Log.d(TAG, "ExternalPath : " + BasicInfo.ExternalPath);
 
                 BasicInfo.FOLDER_PHOTO = BasicInfo.ExternalPath + BasicInfo.FOLDER_PHOTO;
                 BasicInfo.FOLDER_VIDEO = BasicInfo.ExternalPath + BasicInfo.FOLDER_VIDEO;
@@ -71,33 +65,36 @@ public class MultiMemoActivity extends AppCompatActivity {
             }
         }
 
+        // 새 메모 추가, 닫기 버튼에 대한 객체 참조
+        newMemoBtn = (Button) findViewById(R.id.newMemoBtn);
+        closeBtn = (Button) findViewById(R.id.closeBtn);
 
-        // 메모 리스트
-        mMemoListView = (ListView)findViewById(R.id.memoList);
-        mMemoListAdapter = new MemoListAdapter(this);
-        mMemoListView.setAdapter(mMemoListAdapter);
-        mMemoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        // 메모 리스트에 대한 객체 참조
+        memoListView = (ListView) findViewById(R.id.memoList);
+        memoListAdapter = new MemoListAdapter(this);
+        memoListView.setAdapter(memoListAdapter);
+
+        memoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                // 해당 포지션 클릭시 메모 보여주기(메소드 생성)
                 viewMemo(position);
             }
         });
 
-
-        // 새 메모 버튼 설정
-        Button newMemoBtn = (Button)findViewById(R.id.newMemoBtn);
+        // 새 메모 추가 버튼 클릭 리스너
         newMemoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                Log.d(TAG, "newMemoBtn clicked.");
-
                 Intent intent = new Intent(getApplicationContext(), MemoInsertActivity.class);
                 intent.putExtra(BasicInfo.KEY_MEMO_MODE, BasicInfo.MODE_INSERT);
                 startActivityForResult(intent, BasicInfo.REQ_INSERT_ACTIVITY);
             }
         });
 
-        // 닫기 버튼 설정
-        Button closeBtn = (Button)findViewById(R.id.closeBtn);
+        // 닫기 버튼 클릭 리스너
         closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 finish();
             }
@@ -105,6 +102,8 @@ public class MultiMemoActivity extends AppCompatActivity {
 
 
         checkDangerousPermissions();
+
+
     }
 
     private void checkDangerousPermissions() {
@@ -148,8 +147,6 @@ public class MultiMemoActivity extends AppCompatActivity {
         }
     }
 
-
-
     protected void onStart() {
 
         // 데이터베이스 열기
@@ -161,10 +158,6 @@ public class MultiMemoActivity extends AppCompatActivity {
 
         super.onStart();
     }
-
-
-
-
 
     /**
      * 데이터베이스 열기 (데이터베이스가 없을 때는 만들기)
@@ -179,13 +172,11 @@ public class MultiMemoActivity extends AppCompatActivity {
         mDatabase = MemoDatabase.getInstance(this);
         boolean isOpen = mDatabase.open();
         if (isOpen) {
-            Log.d(TAG, "Memo database is open.");
+
         } else {
-            Log.d(TAG, "Memo database is not open.");
+
         }
     }
-
-
 
     /**
      * 메모 리스트 데이터 로딩
@@ -198,9 +189,9 @@ public class MultiMemoActivity extends AppCompatActivity {
             Cursor outCursor = MultiMemoActivity.mDatabase.rawQuery(SQL);
 
             recordCount = outCursor.getCount();
-            Log.d(TAG, "cursor count : " + recordCount + "\n");
 
-            mMemoListAdapter.clear();
+
+            memoListAdapter.clear();
             Resources res = getResources();
 
             for (int i = 0; i < recordCount; i++) {
@@ -226,19 +217,17 @@ public class MultiMemoActivity extends AppCompatActivity {
                 String handwritingId = outCursor.getString(6);
                 String handwritingUriStr = null;
 
-                // Stage3 added
-                handwritingUriStr = getHandwritingUriStr(handwritingId);
-
-                mMemoListAdapter.addItem(new MemoListItem(memoId, dateStr, memoStr, handwritingId, handwritingUriStr, photoId, photoUriStr, videoId, videoUriStr, voiceId, voiceUriStr));
+                memoListAdapter.addItem(new MemoListItem(memoId, dateStr, memoStr, handwritingId, handwritingUriStr, photoId, photoUriStr, videoId, videoUriStr, voiceId, voiceUriStr));
             }
 
             outCursor.close();
 
-            mMemoListAdapter.notifyDataSetChanged();
+            memoListAdapter.notifyDataSetChanged();
         }
 
         return recordCount;
     }
+
 
     /**
      * 사진 데이터 URI 가져오기
@@ -259,11 +248,12 @@ public class MultiMemoActivity extends AppCompatActivity {
         return photoUriStr;
     }
 
+
     /**
      * 손글씨 데이터 URI 가져오기
      */
     public String getHandwritingUriStr(String id_handwriting) {
-        Log.d(TAG, "Handwriting ID : " + id_handwriting);
+
 
         String handwritingUriStr = null;
         if (id_handwriting != null && id_handwriting.trim().length() > 0 && !id_handwriting.equals("-1")) {
@@ -280,9 +270,9 @@ public class MultiMemoActivity extends AppCompatActivity {
         return handwritingUriStr;
     }
 
-
+    // 각 포지션에 따른 메모 데이터 불러오기.
     private void viewMemo(int position) {
-        MemoListItem item = (MemoListItem)mMemoListAdapter.getItem(position);
+        MemoListItem item = (MemoListItem)memoListAdapter.getItem(position);
 
         // 메모 보기 액티비티 띄우기
         Intent intent = new Intent(getApplicationContext(), MemoInsertActivity.class);
@@ -306,8 +296,6 @@ public class MultiMemoActivity extends AppCompatActivity {
         startActivityForResult(intent, BasicInfo.REQ_VIEW_ACTIVITY);
     }
 
-
-
     /**
      * 다른 액티비티의 응답 처리
      */
@@ -329,6 +317,5 @@ public class MultiMemoActivity extends AppCompatActivity {
 
         }
     }
-
 
 }

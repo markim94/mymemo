@@ -39,11 +39,11 @@ public class MemoInsertActivity extends AppCompatActivity {
 
     Button titleBackgroundBtn;
 
-
     Button insertSaveBtn;
     Button insertCancelBtn;
     Button insert_textBtn;
     Button insert_handwritingBtn;
+    Button deleteBtn;
 
     EditText mMemoEdit;
     ImageView mPhoto;
@@ -97,9 +97,8 @@ public class MemoInsertActivity extends AppCompatActivity {
     // text메모와 handwriting메모의 상태확인을 위한 Mode 설정
     int textViewMode = 0;
 
-
     EditText insert_memoEdit;
-    View insert_handwriting;
+    ImageView insert_handwriting;
 
     // 애니메이션
     Animation translateLeftAnim;
@@ -118,7 +117,8 @@ public class MemoInsertActivity extends AppCompatActivity {
         insert_textBtn = (Button)findViewById(R.id.insert_textBtn);
         insert_handwritingBtn = (Button)findViewById(R.id.insert_handwritingBtn);
         insert_memoEdit = (EditText)findViewById(R.id.insert_memoEdit);
-        insert_handwriting = (View)findViewById(R.id.insert_handwriting);
+        insert_handwriting = (ImageView)findViewById(R.id.insert_handwriting);
+        deleteBtn = (Button) findViewById(R.id.deleteBtn);
 
         translateLeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left);
         translateRightAnim = AnimationUtils.loadAnimation(this, R.anim.translate_right);
@@ -171,6 +171,20 @@ public class MemoInsertActivity extends AppCompatActivity {
             }
         });
 
+        insert_handwriting.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), HandwritingMakingActivity.class);
+                startActivityForResult(intent, BasicInfo.REQ_HANDWRITING_MAKING_ACTIVITY);
+            }
+        });
+
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showDialog(BasicInfo.CONFIRM_DELETE);
+            }
+        });
+
+
         setBottomButtons();
 
         setMediaLayout();
@@ -184,9 +198,11 @@ public class MemoInsertActivity extends AppCompatActivity {
 
             titleBackgroundBtn.setText("메모 보기");
             insertSaveBtn.setText("수정");
+            deleteBtn.setVisibility(View.VISIBLE);
         } else {
             titleBackgroundBtn.setText("새 메모");
             insertSaveBtn.setText("저장");
+            deleteBtn.setVisibility(View.GONE);
         }
 
     }
@@ -214,6 +230,16 @@ public class MemoInsertActivity extends AppCompatActivity {
         } else {
             isPhotoFileSaved = true;
             mPhoto.setImageURI(Uri.parse(BasicInfo.FOLDER_PHOTO + photoUri));
+        }
+
+        if(handwritingId.equals("") || handwritingId.equals("-1")) {
+
+        } else {
+            isHandwritingFileSaved = true;
+            tempHandwritingUri = mMediaHandwritingUri;
+
+            Bitmap resultBitmap = BitmapFactory.decodeFile(BasicInfo.FOLDER_HANDWRITING + tempHandwritingUri);
+            insert_handwriting.setImageBitmap(resultBitmap);
         }
 
     }
@@ -287,6 +313,23 @@ public class MemoInsertActivity extends AppCompatActivity {
                 cursor.close();
             }
         }
+
+        String handwritingFileName = insertHandwriting();
+        int handwritingId = -1;
+
+        if (handwritingFileName != null) {
+            // query picture id
+            SQL = "select _ID from " + MemoDatabase.TABLE_HANDWRITING + " where URI = '" + handwritingFileName + "'";
+
+            if (MainActivity.mDatabase != null) {
+                Cursor cursor = MainActivity.mDatabase.rawQuery(SQL);
+                if (cursor.moveToNext()) {
+                    handwritingId = cursor.getInt(0);
+                }
+                cursor.close();
+            }
+        }
+
 
         SQL = "insert into " + MemoDatabase.TABLE_MEMO +
                 "(INPUT_DATE, CONTENT_TEXT, ID_PHOTO, ID_VIDEO, ID_VOICE, ID_HANDWRITING) values(" +
@@ -368,6 +411,61 @@ public class MemoInsertActivity extends AppCompatActivity {
 
             mMediaPhotoId = String.valueOf(photoId);
         }
+
+
+        String handwritingFileName = insertHandwriting();
+        int handwritingId = -1;
+
+        if (handwritingFileName != null) {
+            // query picture id
+            SQL = "select _ID from " + MemoDatabase.TABLE_HANDWRITING + " where URI = '" + handwritingFileName + "'";
+
+            if (MainActivity.mDatabase != null) {
+                Cursor cursor = MainActivity.mDatabase.rawQuery(SQL);
+                if (cursor.moveToNext()) {
+                    handwritingId = cursor.getInt(0);
+                }
+                cursor.close();
+
+                mMediaHandwritingUri = handwritingFileName;
+
+                SQL = "update " + MemoDatabase.TABLE_MEMO +
+                        " set " +
+                        " ID_HANDWRITING = '" + handwritingId + "' " +
+                        " where _id = '" + mMemoId + "'";
+
+                if (MainActivity.mDatabase != null) {
+                    MainActivity.mDatabase.rawQuery(SQL);
+                }
+
+                mMediaHandwritingId = String.valueOf(handwritingId);
+            }
+        } else if(isHandwritingCanceled && isHandwritingFileSaved) {
+            SQL = "delete from " + MemoDatabase.TABLE_HANDWRITING +
+                    " where _ID = '" + mMediaHandwritingId + "'";
+
+            if (MainActivity.mDatabase != null) {
+                MainActivity.mDatabase.execSQL(SQL);
+            }
+
+            File handwritingFile = new File(BasicInfo.FOLDER_HANDWRITING + mMediaHandwritingUri);
+            if (handwritingFile.exists()) {
+                handwritingFile.delete();
+            }
+
+            SQL = "update " + MemoDatabase.TABLE_MEMO +
+                    " set " +
+                    " ID_HANDWRITING = '" + handwritingId + "' " +
+                    " where _id = '" + mMemoId + "'";
+
+            if (MainActivity.mDatabase != null) {
+                MainActivity.mDatabase.rawQuery(SQL);
+            }
+
+            mMediaHandwritingId = String.valueOf(handwritingId);
+        }
+
+
 
         // update memo info
         SQL = "update " + MemoDatabase.TABLE_MEMO +
@@ -460,6 +558,69 @@ public class MemoInsertActivity extends AppCompatActivity {
         }
         return photoName;
     }
+
+    private String insertHandwriting() {
+        String handwritingName = null;
+
+        if (isHandwritingMade) { // captured Bitmap
+            try {
+
+                if (mMemoMode != null && mMemoMode.equals(BasicInfo.MODE_MODIFY)) {
+
+
+                    String SQL = "delete from " + MemoDatabase.TABLE_HANDWRITING +
+                            " where _ID = '" + mMediaHandwritingId + "'";
+
+                    if (MainActivity.mDatabase != null) {
+                        MainActivity.mDatabase.execSQL(SQL);
+                    }
+
+                    File previousFile = new File(BasicInfo.FOLDER_HANDWRITING + mMediaHandwritingUri);
+                    if (previousFile.exists()) {
+                        previousFile.delete();
+                    }
+                }
+
+
+                File handwritingFolder = new File(BasicInfo.FOLDER_HANDWRITING);
+
+                //폴더가 없다면 폴더를 생성한다.
+                if(!handwritingFolder.isDirectory()){
+
+                    handwritingFolder.mkdirs();
+                }
+
+                // Temporal Hash for handwriting file name
+
+                handwritingName = createFilename();
+
+                FileOutputStream outstream = new FileOutputStream(BasicInfo.FOLDER_HANDWRITING + handwritingName);
+                // MIKE 20101215
+                resultHandwritingBitmap.compress(Bitmap.CompressFormat.PNG, 100, outstream);
+                // MIKE END
+                outstream.close();
+
+
+                if (handwritingName != null) {
+
+
+                    // INSERT HANDWRITING INFO
+                    String SQL = "insert into " + MemoDatabase.TABLE_HANDWRITING + "(URI) values(" + "'" + handwritingName + "')";
+                    if (MainActivity.mDatabase != null) {
+                        MainActivity.mDatabase.execSQL(SQL);
+                    }
+                }
+
+            } catch (IOException ex) {
+
+            }
+
+
+        }
+        return handwritingName;
+    }
+
+
 
 
     private String createFilename() {
@@ -630,11 +791,74 @@ public class MemoInsertActivity extends AppCompatActivity {
 
                 break;
 
+            case BasicInfo.CONFIRM_DELETE:
+                builder = new AlertDialog.Builder(this);
+                builder.setTitle("메모");
+                builder.setMessage("메모를 삭제하시겠습니까?");
+                builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        deleteMemo();
+                    }
+                });
+                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dismissDialog(BasicInfo.CONFIRM_DELETE);
+                    }
+                });
+
             default:
                 break;
         }
 
         return builder.create();
+    }
+
+
+    /**
+     * 메모 삭제
+     */
+    private void deleteMemo() {
+
+        // delete photo record
+
+        String SQL = "delete from " + MemoDatabase.TABLE_PHOTO +
+                " where _ID = '" + mMediaPhotoId + "'";
+
+        if (MainActivity.mDatabase != null) {
+            MainActivity.mDatabase.execSQL(SQL);
+        }
+
+        File photoFile = new File(BasicInfo.FOLDER_PHOTO + mMediaPhotoUri);
+        if (photoFile.exists()) {
+            photoFile.delete();
+        }
+        // delete handwriting record
+
+        SQL = "delete from " + MemoDatabase.TABLE_HANDWRITING +
+                " where _ID = '" + mMediaHandwritingId + "'";
+
+        if (MainActivity.mDatabase != null) {
+            MainActivity.mDatabase.execSQL(SQL);
+        }
+
+        File handwritingFile = new File(BasicInfo.FOLDER_HANDWRITING + mMediaHandwritingUri);
+        if (handwritingFile.exists()) {
+            handwritingFile.delete();
+        }
+
+
+        // delete memo record
+
+        SQL = "delete from " + MemoDatabase.TABLE_MEMO +
+                " where _id = '" + mMemoId + "'";
+
+        if (MainActivity.mDatabase != null) {
+            MainActivity.mDatabase.execSQL(SQL);
+        }
+
+        setResult(RESULT_OK);
+
+        finish();
     }
 
     public void showPhotoCaptureActivity() {
@@ -704,6 +928,23 @@ public class MemoInsertActivity extends AppCompatActivity {
 
                 break;
 
+            case BasicInfo.REQ_HANDWRITING_MAKING_ACTIVITY:  // 손글씨를 저장하는 경우
+
+
+                if (resultCode == RESULT_OK) {
+                    boolean isHandwritingExists = checkMadeHandwritingFile();
+                    if(isHandwritingExists) {
+                        resultHandwritingBitmap = BitmapFactory.decodeFile(BasicInfo.FOLDER_HANDWRITING + "made");
+                        tempHandwritingUri = "made";
+
+                        isHandwritingMade = true;
+
+                        insert_handwriting.setImageBitmap(resultHandwritingBitmap);
+                    }
+                }
+
+                break;
+
         }
     }
 
@@ -713,6 +954,18 @@ public class MemoInsertActivity extends AppCompatActivity {
      */
     private boolean checkCapturedPhotoFile() {
         File file = new File(BasicInfo.FOLDER_PHOTO + "captured");
+        if(file.exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 저장된 손글씨 파일 확인
+     */
+    private boolean checkMadeHandwritingFile() {
+        File file = new File(BasicInfo.FOLDER_HANDWRITING + "made");
         if(file.exists()) {
             return true;
         }

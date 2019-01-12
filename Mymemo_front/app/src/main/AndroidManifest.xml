@@ -20,9 +20,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MemoInsertActivity" />
-        <activity android:name=".PhotoCaptureActivity" />
-        <activity android:name=".PhotoSelectionActivity"></activity>
+
+        <activity android:name=".MemoInsertActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".PhotoCaptureActivity"
+            android:screenOrientation="landscape"/>
+
+        <activity android:name=".PhotoSelectionActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".HandwritingMakingActivity"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".PenPaletteDialog"
+            android:theme="@android:style/Theme.Dialog"
+            android:screenOrientation="landscape"
+            >
+        </activity>
+        <activity
+            android:name=".ColorPaletteDialog"
+            android:theme="@android:style/Theme.Dialog"
+            android:screenOrientation="landscape"
+            >
+        </activity>
+
     </application>
 
 </manifest>

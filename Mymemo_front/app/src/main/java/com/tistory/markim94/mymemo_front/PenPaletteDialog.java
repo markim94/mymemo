@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 
 public class PenPaletteDialog extends Activity {
@@ -29,7 +30,7 @@ public class PenPaletteDialog extends Activity {
         this.setTitle("펜 굵기 선택");
 
         mGridView = (GridView) findViewById(R.id.colorGrid);
-        mCloseBtn = (TitleBitmapButton ) findViewById(R.id.closeBtn);
+        mCloseBtn = (TitleBitmapButton) findViewById(R.id.closeBtn);
 
         mGridView.setColumnWidth(12);
         mGridView.setBackgroundColor(Color.GRAY);

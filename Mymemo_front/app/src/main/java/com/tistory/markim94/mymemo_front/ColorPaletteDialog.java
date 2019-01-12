@@ -46,11 +46,6 @@ public class ColorPaletteDialog extends Activity {
 
 }
 
-/**
- * Adapter for Color Data
- *
- * @author Mike
- */
 class ColorDataAdapter extends BaseAdapter {
 
     /**

@@ -100,4 +100,12 @@ public class BasicInfo {
 
     public static final int CONFIRM_TEXT_INPUT = 3002;
 
+    public static boolean isAbsoluteVideoPath(String videoUri) {
+        if(videoUri.startsWith(URI_MEDIA_FORMAT)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }

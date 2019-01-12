@@ -17,7 +17,7 @@
         android:padding="4dp"
         android:layout_gravity="center_horizontal"
         >
-        <org.techtown.multimemo.common.TitleBitmapButton
+        <com.tistory.markim94.mymemo_front.TitleBitmapButton
             android:id="@+id/closeBtn"
             android:drawableLeft="@drawable/cancel_btn"
             android:drawablePadding="2dp"

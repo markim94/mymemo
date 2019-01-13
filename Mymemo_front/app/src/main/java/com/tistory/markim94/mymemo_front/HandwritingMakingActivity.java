@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -34,7 +35,7 @@ public class HandwritingMakingActivity extends AppCompatActivity {
     int mOldSize;
     boolean mEraserSelected = false;
 
-    TitleBitmapButton mHandwritingMakingSaveBtn;
+    Button mHandwritingMakingSaveBtn;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,7 +201,7 @@ public class HandwritingMakingActivity extends AppCompatActivity {
 
     public void setBottomLayout()
     {
-        mHandwritingMakingSaveBtn = (TitleBitmapButton)findViewById(R.id.handwriting_making_saveBtn);
+        mHandwritingMakingSaveBtn = (Button)findViewById(R.id.handwriting_making_saveBtn);
 
         mHandwritingMakingSaveBtn.setOnClickListener(new View.OnClickListener() {
 

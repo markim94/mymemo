@@ -60,12 +60,15 @@
             android:layout_marginRight="4dp"
             >
         </LinearLayout>
-        <com.tistory.markim94.mymemo_front.TitleBitmapButton
+        <Button
             android:id="@+id/handwriting_making_saveBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="손글씨 저장"
+            android:text="저장"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="#73D3BC"
             />
     </LinearLayout>
 

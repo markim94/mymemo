@@ -86,8 +86,8 @@ public class MemoInsertActivity extends AppCompatActivity {
     boolean isHandwritingCanceled;
 
     Calendar mCalendar = Calendar.getInstance();
-    TitleBitmapButton insertDateButton;
-    TitleBitmapButton insertTimeButton;
+    Button insertDateButton;
+    Button insertTimeButton;
 
     int mSelectdContentArray;
     int mChoicedArrayItem;
@@ -95,8 +95,8 @@ public class MemoInsertActivity extends AppCompatActivity {
     Button titleBackgroundBtn;
     Button insertSaveBtn;
     Button insertCancelBtn;
-    TitleBitmapButton insert_textBtn;
-    TitleBitmapButton insert_handwritingBtn;
+    Button insert_textBtn;
+    Button insert_handwritingBtn;
     Button deleteBtn;
 
     int textViewMode = 0;
@@ -114,8 +114,8 @@ public class MemoInsertActivity extends AppCompatActivity {
         mPhoto = (ImageView)findViewById(R.id.insert_photo);
         mMemoEdit = (EditText) findViewById(R.id.insert_memoEdit);
 
-        insert_textBtn = (TitleBitmapButton)findViewById(R.id.insert_textBtn);
-        insert_handwritingBtn = (TitleBitmapButton)findViewById(R.id.insert_handwritingBtn);
+        insert_textBtn = (Button)findViewById(R.id.insert_textBtn);
+        insert_handwritingBtn = (Button)findViewById(R.id.insert_handwritingBtn);
         insert_memoEdit = (EditText)findViewById(R.id.insert_memoEdit);
         insert_handwriting = (ImageView)findViewById(R.id.insert_handwriting);
         deleteBtn = (Button)findViewById(R.id.deleteBtn);
@@ -1011,7 +1011,7 @@ public class MemoInsertActivity extends AppCompatActivity {
     }
 
     private void setCalendar(){
-        insertDateButton = (TitleBitmapButton) findViewById(R.id.insert_dateBtn);
+        insertDateButton = (Button) findViewById(R.id.insert_dateBtn);
         insertDateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String mDateStr = insertDateButton.getText().toString();
@@ -1036,7 +1036,7 @@ public class MemoInsertActivity extends AppCompatActivity {
             }
         });
 
-        insertTimeButton = (TitleBitmapButton) findViewById(R.id.insert_timeBtn);
+        insertTimeButton = (Button) findViewById(R.id.insert_timeBtn);
         insertTimeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String mTimeStr = insertTimeButton.getText().toString();

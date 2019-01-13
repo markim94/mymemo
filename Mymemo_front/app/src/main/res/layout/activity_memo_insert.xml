@@ -29,28 +29,33 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_below="@+id/titleLayout">
+        android:layout_below="@+id/titleLayout"
+        android:layout_above="@id/buttonLayout">
 
         <LinearLayout
             android:id="@+id/dateLayout"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:layout_gravity="center_horizontal"
             >
-            <com.tistory.markim94.mymemo_front.TitleBitmapButton
+            <Button
                 android:id="@+id/insert_dateBtn"
-                android:layout_width="180dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|end"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#00ff0000"
+                android:textColor="#73D3BC"
+                android:textSize="15dp"
                 />
-            <com.tistory.markim94.mymemo_front.TitleBitmapButton
+            <Button
                 android:id="@+id/insert_timeBtn"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|start" />
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:textSize="15dp"
+                android:textColor="#73D3BC"
+                android:background="#00ff0000"
+                android:layout_gravity="center_horizontal" />
         </LinearLayout>
 
         <LinearLayout
@@ -110,8 +115,8 @@
 
                 <EditText
                     android:id="@+id/insert_memoEdit"
-                    android:layout_width="200dp"
-                    android:layout_height="160dp"
+                    android:layout_width="320dp"
+                    android:layout_height="230dp"
                     android:gravity="top"
                     android:layout_margin="5dp"
                     android:padding="10dp"
@@ -122,48 +127,54 @@
 
                 <ImageView
                     android:id="@+id/insert_handwriting"
-                    android:layout_width="200dp"
-                    android:layout_height="160dp"
+                    android:layout_width="320dp"
+                    android:layout_height="230dp"
                     android:layout_margin="5dp"
                     android:background="@drawable/handwriting_back"
                     android:visibility="gone" />
             </FrameLayout>
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="center_horizontal"
-                >
-                <com.tistory.markim94.mymemo_front.TitleBitmapButton
-                    android:id="@+id/insert_textBtn"
-                    android:layout_width="100dp"
-                    android:layout_height="76dp"
-                    android:text="텍스트"
-                    android:textSize="18dp"
-                    android:textStyle="bold" />
 
-                <com.tistory.markim94.mymemo_front.TitleBitmapButton
-                    android:id="@+id/insert_handwritingBtn"
-                    android:layout_width="100dp"
-                    android:layout_height="76dp"
-                    android:layout_marginTop="10dp"
-                    android:text="손글씨"
-                    android:textSize="18dp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginLeft="25dp">
+            <Button
+                android:id="@+id/insert_textBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="텍스트메모"
+                android:textSize="17dp"
+                android:textColor="#73D3BC"
+                android:textStyle="bold"
+                android:background="#00ff0000" />
 
+            <Button
+                android:id="@+id/insert_handwritingBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="노트메모"
+                android:textSize="17dp"
+                android:layout_marginLeft="5dp"
+                android:textStyle="bold"
+                android:textColor="#73D3BC"
+                android:background="#00ff0000"/>
+
+        </LinearLayout>
 
     </LinearLayout>
+
+
     <LinearLayout
         android:id="@+id/buttonLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_alignParentBottom="true"
         android:background="#73D3BC">
 

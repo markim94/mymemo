@@ -54,8 +54,8 @@ public class PhotoCaptureActivity extends AppCompatActivity {
     }
 
     public void setCaptureBtn() {
-        Button takeBtn = (Button) findViewById(R.id.capture_takeBtn);
-        //takeBtn.setBackground(R.drawable.btn_camera_capture_normal, R.drawable.btn_camera_capture_click);
+        TitleBitmapButton takeBtn = (TitleBitmapButton) findViewById(R.id.capture_takeBtn);
+        takeBtn.setBackgroundBitmap(R.drawable.btn_camera_capture_normal, R.drawable.btn_camera_capture_click);
         takeBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (!processing) {

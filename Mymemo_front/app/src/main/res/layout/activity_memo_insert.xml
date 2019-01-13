@@ -53,7 +53,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_gravity="center_horizontal">
 
-                <Button
+                <com.tistory.markim94.mymemo_front.TitleBitmapButton
                     android:id="@+id/insert_videoBtn"
                     android:layout_width="100dp"
                     android:layout_height="76dp"
@@ -61,7 +61,7 @@
                     android:textSize="18dp"
                     android:textStyle="bold" />
 
-                <Button
+                <com.tistory.markim94.mymemo_front.TitleBitmapButton
                     android:id="@+id/insert_voiceBtn"
                     android:layout_width="100dp"
                     android:layout_height="76dp"
@@ -113,7 +113,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_gravity="center_horizontal"
                 >
-                <Button
+                <com.tistory.markim94.mymemo_front.TitleBitmapButton
                     android:id="@+id/insert_textBtn"
                     android:layout_width="100dp"
                     android:layout_height="76dp"
@@ -121,7 +121,7 @@
                     android:textSize="18dp"
                     android:textStyle="bold" />
 
-                <Button
+                <com.tistory.markim94.mymemo_front.TitleBitmapButton
                     android:id="@+id/insert_handwritingBtn"
                     android:layout_width="100dp"
                     android:layout_height="76dp"
@@ -141,13 +141,13 @@
             android:layout_marginBottom="10dp"
             android:layout_gravity="center_horizontal"
             >
-            <Button
+            <com.tistory.markim94.mymemo_front.TitleBitmapButton
                 android:id="@+id/insert_dateBtn"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 />
-            <Button
+            <com.tistory.markim94.mymemo_front.TitleBitmapButton
                 android:id="@+id/insert_timeBtn"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"

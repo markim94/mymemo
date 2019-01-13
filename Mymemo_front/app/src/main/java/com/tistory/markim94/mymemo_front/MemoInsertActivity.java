@@ -36,8 +36,10 @@ public class MemoInsertActivity extends AppCompatActivity {
 
     public static final String TAG = "MemoInsertActivity";
 
+    TitleBitmapButton mPhotoBtn;
     Button mVideoBtn;
     Button mVoiceBtn;
+    TitleBitmapButton mHandwritingBtn;
 
     EditText mMemoEdit;
     ImageView mPhoto;
@@ -84,8 +86,8 @@ public class MemoInsertActivity extends AppCompatActivity {
     boolean isHandwritingCanceled;
 
     Calendar mCalendar = Calendar.getInstance();
-    Button insertDateButton;
-    Button insertTimeButton;
+    TitleBitmapButton insertDateButton;
+    TitleBitmapButton insertTimeButton;
 
     int mSelectdContentArray;
     int mChoicedArrayItem;
@@ -93,8 +95,8 @@ public class MemoInsertActivity extends AppCompatActivity {
     Button titleBackgroundBtn;
     Button insertSaveBtn;
     Button insertCancelBtn;
-    Button insert_textBtn;
-    Button insert_handwritingBtn;
+    TitleBitmapButton insert_textBtn;
+    TitleBitmapButton insert_handwritingBtn;
     Button deleteBtn;
 
     int textViewMode = 0;
@@ -112,13 +114,13 @@ public class MemoInsertActivity extends AppCompatActivity {
         mPhoto = (ImageView)findViewById(R.id.insert_photo);
         mMemoEdit = (EditText) findViewById(R.id.insert_memoEdit);
 
-        insert_textBtn = (Button)findViewById(R.id.insert_textBtn);
-        insert_handwritingBtn = (Button)findViewById(R.id.insert_handwritingBtn);
+        insert_textBtn = (TitleBitmapButton)findViewById(R.id.insert_textBtn);
+        insert_handwritingBtn = (TitleBitmapButton)findViewById(R.id.insert_handwritingBtn);
         insert_memoEdit = (EditText)findViewById(R.id.insert_memoEdit);
         insert_handwriting = (ImageView)findViewById(R.id.insert_handwriting);
         deleteBtn = (Button)findViewById(R.id.deleteBtn);
-        mVideoBtn = (Button)findViewById(R.id.insert_videoBtn);
-        mVoiceBtn = (Button)findViewById(R.id.insert_voiceBtn);
+        mVideoBtn = (TitleBitmapButton)findViewById(R.id.insert_videoBtn);
+        mVoiceBtn = (TitleBitmapButton)findViewById(R.id.insert_voiceBtn);
 
         mVideoBtn.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable
                 (R.drawable.icon_video), null, null);
@@ -1003,13 +1005,13 @@ public class MemoInsertActivity extends AppCompatActivity {
         isVoiceRecorded = false;
         isHandwritingMade = false;
 
-        mVideoBtn = (Button)findViewById(R.id.insert_videoBtn);
-        mVoiceBtn = (Button)findViewById(R.id.insert_voiceBtn);
+        mVideoBtn = (TitleBitmapButton)findViewById(R.id.insert_videoBtn);
+        mVoiceBtn = (TitleBitmapButton)findViewById(R.id.insert_voiceBtn);
 
     }
 
     private void setCalendar(){
-        insertDateButton = (Button) findViewById(R.id.insert_dateBtn);
+        insertDateButton = (TitleBitmapButton) findViewById(R.id.insert_dateBtn);
         insertDateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String mDateStr = insertDateButton.getText().toString();
@@ -1034,7 +1036,7 @@ public class MemoInsertActivity extends AppCompatActivity {
             }
         });
 
-        insertTimeButton = (Button) findViewById(R.id.insert_timeBtn);
+        insertTimeButton = (TitleBitmapButton) findViewById(R.id.insert_timeBtn);
         insertTimeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String mTimeStr = insertTimeButton.getText().toString();

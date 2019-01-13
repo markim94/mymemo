@@ -15,11 +15,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tistory.markim94.mymemo_front.db.MemoDatabase;
 
 import java.io.File;
+import java.util.Date;
 
 public class MultiMemoActivity extends AppCompatActivity {
 
@@ -35,6 +37,8 @@ public class MultiMemoActivity extends AppCompatActivity {
 
     // 메모 개수
     int mMemoCount = 0;
+
+    TextView itemCount;
 
     /**
      * 데이터베이스 인스턴스
@@ -100,6 +104,8 @@ public class MultiMemoActivity extends AppCompatActivity {
             }
         });
 
+        itemCount = (TextView)findViewById(R.id.itemCount);
+
 
         checkDangerousPermissions();
 
@@ -110,7 +116,8 @@ public class MultiMemoActivity extends AppCompatActivity {
         String[] permissions = {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
+                Manifest.permission.CAMERA,
+                android.Manifest.permission.RECORD_AUDIO
         };
 
         int permissionCheck = PackageManager.PERMISSION_GRANTED;
@@ -192,7 +199,8 @@ public class MultiMemoActivity extends AppCompatActivity {
 
 
             memoListAdapter.clear();
-            Resources res = getResources();
+
+            //Resources res = getResources();
 
             for (int i = 0; i < recordCount; i++) {
                 outCursor.moveToNext();
@@ -200,8 +208,16 @@ public class MultiMemoActivity extends AppCompatActivity {
                 String memoId = outCursor.getString(0);
 
                 String dateStr = outCursor.getString(1);
-                if (dateStr.length() > 10) {
-                    dateStr = dateStr.substring(0, 10);
+                if (dateStr != null && dateStr.length() > 10) {
+                    //dateStr = dateStr.substring(0, 10);
+                    try {
+                        Date inDate = BasicInfo.dateFormat.parse(dateStr);
+                        dateStr = BasicInfo.dateNameFormat2.format(inDate);
+                    } catch(Exception ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    dateStr = "";
                 }
 
                 String memoStr = outCursor.getString(2);
@@ -217,12 +233,20 @@ public class MultiMemoActivity extends AppCompatActivity {
                 String handwritingId = outCursor.getString(6);
                 String handwritingUriStr = null;
 
+                handwritingUriStr = getHandwritingUriStr(handwritingId);
+
+                videoUriStr = getVideoUriStr(videoId);
+                voiceUriStr = getVoiceUriStr(voiceId);
+
                 memoListAdapter.addItem(new MemoListItem(memoId, dateStr, memoStr, handwritingId, handwritingUriStr, photoId, photoUriStr, videoId, videoUriStr, voiceId, voiceUriStr));
             }
 
             outCursor.close();
 
             memoListAdapter.notifyDataSetChanged();
+
+            itemCount.setText(recordCount + " " + getResources().getString(R.string.item_count));
+            itemCount.invalidate();
         }
 
         return recordCount;
@@ -268,6 +292,48 @@ public class MultiMemoActivity extends AppCompatActivity {
         }
 
         return handwritingUriStr;
+    }
+
+    /**
+     * 동영상 데이터 URI 가져오기
+     */
+    public String getVideoUriStr(String id_video) {
+
+
+        String videoUriStr = null;
+        if (id_video != null && id_video.trim().length() > 0 && !id_video.equals("-1")) {
+            String SQL = "select URI from " + MemoDatabase.TABLE_VIDEO + " where _ID = " + id_video + "";
+            Cursor videoCursor = MultiMemoActivity.mDatabase.rawQuery(SQL);
+            if (videoCursor.moveToNext()) {
+                videoUriStr = videoCursor.getString(0);
+            }
+            videoCursor.close();
+        } else {
+            videoUriStr = "";
+        }
+
+        return videoUriStr;
+    }
+
+    /**
+     * 녹음 데이터 URI 가져오기
+     */
+    public String getVoiceUriStr(String id_voice) {
+
+
+        String voiceUriStr = null;
+        if (id_voice != null && id_voice.trim().length() > 0 && !id_voice.equals("-1")) {
+            String SQL = "select URI from " + MemoDatabase.TABLE_VOICE + " where _ID = " + id_voice + "";
+            Cursor voiceCursor = MultiMemoActivity.mDatabase.rawQuery(SQL);
+            if (voiceCursor.moveToNext()) {
+                voiceUriStr = voiceCursor.getString(0);
+            }
+            voiceCursor.close();
+        } else {
+            voiceUriStr = "";
+        }
+
+        return voiceUriStr;
     }
 
     // 각 포지션에 따른 메모 데이터 불러오기.

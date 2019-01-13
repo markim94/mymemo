@@ -59,7 +59,7 @@
 
         <!--손글씨 영역-->
         <ImageView
-            android:id="@+id/itemHandWriting"
+            android:id="@+id/itemHandwriting"
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_marginLeft="4dp"

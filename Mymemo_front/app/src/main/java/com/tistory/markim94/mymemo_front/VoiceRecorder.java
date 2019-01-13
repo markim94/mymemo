@@ -32,7 +32,7 @@ public class VoiceRecorder implements OnCompletionListener, OnErrorListener {
     /**
      * Temporary storage used in case of invalid SD card
      */
-    public static final String TEMP_STORAGE = "/data/data/org.androidtown.multimemo/voice/";
+    public static final String TEMP_STORAGE = "/data/data/com.tistory.markim94.mymemo/voice/";
 
 
 

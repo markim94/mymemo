@@ -12,6 +12,7 @@ public class MemoListAdapter extends BaseAdapter {
 
     // main 액티비티에서 context 받아오기 위해서
     private Context mContext;
+
     public MemoListAdapter(Context context) { mContext = context; }
 
     // 객체 MemoListItem들을 array에 담기

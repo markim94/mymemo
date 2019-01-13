@@ -11,7 +11,7 @@
         android:layout_gravity="center"
         android:id="@+id/frame" />
 
-    <Button
+    <com.tistory.markim94.mymemo_front.TitleBitmapButton
         android:id="@+id/capture_takeBtn"
         android:layout_width="80dp"
         android:layout_height="150dp"

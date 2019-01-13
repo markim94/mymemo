@@ -1321,6 +1321,8 @@ public class MemoInsertActivity extends AppCompatActivity {
                     }
                 });
 
+                break;
+
             case BasicInfo.CONTENT_VIDEO:
                 builder = new AlertDialog.Builder(this);
 

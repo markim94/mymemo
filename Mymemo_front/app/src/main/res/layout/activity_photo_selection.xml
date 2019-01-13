@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             >
-            <Button
+            <com.tistory.markim94.mymemo_front.TitleBitmapButton
                 android:id="@+id/loading_okBtn"
                 android:layout_width="100dp"
                 android:layout_height="48dp"
@@ -52,7 +52,7 @@
                 android:textSize="18dp"
                 android:textStyle="bold"
                 />
-            <Button
+            <com.tistory.markim94.mymemo_front.TitleBitmapButton
                 android:id="@+id/loading_cancelBtn"
                 android:layout_width="100dp"
                 android:layout_height="48dp"

@@ -74,7 +74,6 @@ public class PhotoSelectionActivity extends AppCompatActivity {
 
                     mAlbumPhotoUri = uri; //앨범에서 이미지를 선택한 URI
 
-                    // MIKE UPDATE START 2012-07-07
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inSampleSize = 8;
 
@@ -85,7 +84,6 @@ public class PhotoSelectionActivity extends AppCompatActivity {
 
                     resultPhotoBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, options);
 
-                    // MIKE UPDATE END
 
                     Log.d(TAG, "Selected image URI from Album : " + mAlbumPhotoUri);
                     mSelectPhotoText.setVisibility(View.GONE);

@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">멀티메모</string>
-    <string name="main_title">멀티메모</string>
+    <string name="app_name">세모</string>
+    <string name="main_title">세상 모든메모, 세모</string>
     <string name="new_title">새 메모</string>
     <string name="view_title">메모 보기</string>
     <string name="memo_title">메모</string>

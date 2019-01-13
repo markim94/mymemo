@@ -97,12 +97,12 @@ public class MultiMemoActivity extends AppCompatActivity {
         });
 
         // 닫기 버튼 클릭 리스너
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+//        closeBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                finish();
+//            }
+//        });
 
         itemCount = (TextView)findViewById(R.id.itemCount);
 

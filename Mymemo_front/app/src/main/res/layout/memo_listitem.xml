@@ -3,18 +3,27 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="7dp"
+    android:layout_marginRight="7dp"
+    android:background="#ffffff">
+
+    <!--android:background="#f1fefa-->
 
     <!--리스트 상단영역(사진, 날짜, 텍스트)-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/itemPhoto"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_marginTop="23dp"
+            android:layout_marginLeft="7dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,12 +35,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="0000년 00월 00일"
-                android:gravity="end"/>
+                android:gravity="end"
+                android:textSize="10dp"
+                android:textColor="#bababa"/>
 
             <TextView
                 android:id="@+id/itemText"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:text="텍스트" />
 
         </LinearLayout>
@@ -46,15 +61,21 @@
         <!--영상 여부 확인 아이콘 영역-->
         <ImageView
             android:id="@+id/itemVideoState"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="20dp"
             />
+
+
 
         <!--녹음 여부 확인 아이콘 영역-->
         <ImageView
             android:id="@+id/itemVoiceState"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
             />
 
         <!--손글씨 영역-->
@@ -62,8 +83,10 @@
             android:id="@+id/itemHandwriting"
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:adjustViewBounds="true"
             android:scaleType="centerInside"/>
 

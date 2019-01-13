@@ -6,14 +6,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MultiMemoActivity"
-    android:background="#ffffffff">
+    android:background="#ebebeb">
+
+
+
 
     <!--상단 타이틀 영역-->
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/titleLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/topLayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:text="세상 모든 메모, 세모"
+            android:textSize="24dp"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="#73D3BC"/>
 
         <TextView
             android:id="@+id/itemCount"
@@ -27,42 +41,60 @@
             android:textColor="#ffc35d03"
             android:textSize="12dp"
             android:textStyle="bold"
+            android:layout_below="@id/topLayout"
             />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <!--메모 리스트 영역-->
     <ListView
         android:id="@+id/memoList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/titleLayout"
-        android:layout_above="@+id/buttonLayout">
+        android:layout_below="@+id/titleLayout">
 
     </ListView>
 
+    <!--<LinearLayout-->
+        <!--android:id="@+id/buttonLayout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:gravity="center">-->
+
     <LinearLayout
-        android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:gravity="center">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="end|bottom">
 
         <Button
             android:id="@+id/newMemoBtn"
-            android:layout_width="150dp"
-            android:layout_height="48dp"
-            android:layout_marginRight="20dp"
-            android:text="새 메모"/>
-
-        <Button
-            android:id="@+id/closeBtn"
-            android:layout_width="150dp"
-            android:layout_height="48dp"
-            android:text="닫기"/>
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/image_newmemo"
+            android:layout_marginBottom="15dp"
+            android:layout_marginRight="15dp"/>
 
 
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+    </FrameLayout>
+
+        <!--닫기 버튼 미사용-->
+        <!--<Button-->
+            <!--android:id="@+id/closeBtn"-->
+            <!--android:layout_width="150dp"-->
+            <!--android:layout_height="48dp"-->
+            <!--android:text="닫기"-->
+            <!--android:visibility="gone"/>-->
+
 
 </RelativeLayout>

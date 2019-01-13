@@ -1479,9 +1479,6 @@ public class MemoInsertActivity extends AppCompatActivity {
             photoFile.delete();
         }
 
-
-
-
         // delete handwriting record
         Log.d(TAG, "deleting previous handwriting record and file : " + mMediaHandwritingId);
         SQL = "delete from " + MemoDatabase.TABLE_HANDWRITING +
